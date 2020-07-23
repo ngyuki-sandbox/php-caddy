@@ -1,0 +1,15 @@
+localhost:2015 {
+    root * /app
+    file_server
+
+    tls internal
+
+    php_fastcgi unix//var/run/php/php-fpm.sock
+
+    respond /favicon.ico 404
+
+    log {
+        output stderr
+        format single_field common_log
+    }
+}

@@ -1,0 +1,36 @@
+version: "3.7"
+
+services:
+  php:
+    image: php:fpm-alpine
+    volumes:
+      - ./:/app/
+      - run:/var/run/php/
+    working_dir: /app/
+    environment:
+      PHP_FPM_CONFIG: |
+        [www]
+        user = root
+        group = root
+        listen = /var/run/php/php-fpm.sock
+    command:
+      - sh
+      - -c
+      - |
+          echo "$$PHP_FPM_CONFIG" > /usr/local/etc/php-fpm.d/zzz.conf
+          exec php-fpm --nodaemonize --allow-to-run-as-root
+
+  caddy:
+    image: caddy
+    volumes:
+      - ./:/app/
+      - run:/var/run/php/
+    working_dir: /app/
+    ports:
+      - 2015:2015
+    command:
+      - caddy
+      - run
+
+volumes:
+  run:
